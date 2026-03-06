@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de" class="dark scroll-smooth" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Facebook Groups Automation - Mitglieder-Vermittlung & Admin-Automation">
+    <title>Facebook Groups Automation | Automate. Sell. Scale.</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                animation: {
+                    'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    'blob': 'blob 10s infinite',
+                    'scan': 'scan 8s linear infinite',
+                    'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    'slide-up-delayed': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards',
+                },
+                keyframes: {
+                    fadeIn: {
+                        '0%': { opacity: '0', transform: 'translateY(10px)' },
+                        '100%': { opacity: '1', transform: 'translateY(0)' },
+                    },
+                    slideUp: {
+                        '0%': { opacity: '0', transform: 'translateY(30px)' },
+                        '100%': { opacity: '1', transform: 'translateY(0)' },
+                    },
+                    blob: {
+                        '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                        '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                        '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                        '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                    },
+                    scan: {
+                        '0%': { transform: 'translateY(-100%)' },
+                        '100%': { transform: 'translateY(100%)' },
+                    },
+                },
+            },
+        },
+    };
+    </script>
+    
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+    /* Energy Streaks Animation */
+    @keyframes rain-drop {
+        0% { transform: translateY(-100vh); opacity: 0; }
+        15% { opacity: var(--streak-opacity, 0.4); }
+        85% { opacity: var(--streak-opacity, 0.4); }
+        100% { transform: translateY(200vh); opacity: 0; }
+    }
+    
+    .energy-streak {
+        position: absolute;
+        top: -20%;
+        width: 1px;
+        height: 40vh;
+        background: linear-gradient(180deg, transparent, var(--streak-color, #3b82f6), transparent);
+        animation: rain-drop linear infinite;
+        opacity: 0;
+        will-change: transform, opacity;
+    }
+    
+    .energy-streak.layer-far { width: 1px; filter: blur(1.5px); z-index: 0; }
+    .energy-streak.layer-mid { width: 1px; filter: blur(0.5px); z-index: 1; }
+    .energy-streak.layer-near { width: 2px; filter: blur(0); z-index: 2; height: 25vh; }
+    
+    /* Glow Blobs */
+    .ambient-glow {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+    
+    .glow-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.7;
+    }
+    
+    /* Spotlight */
+    .spotlight-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+            800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(59, 130, 246, 0.25),
+            transparent 45%
+        );
+        transition: opacity 0.3s ease;
+    }
+    
+    /* Dashboard UI Animation */
+    @keyframes aura-pulse-dark {
+        0%, 100% {
+            box-shadow: 0 0 0 1px #3b82f6,
+                        0 0 30px -5px rgba(255, 255, 255, 0.1),
+                        0 -40px 100px -30px rgba(59, 130, 246, 0.15);
+        }
+        50% {
+            box-shadow: 0 0 0 1px #60a5fa,
+                        0 0 45px -5px rgba(255, 255, 255, 0.15),
+                        0 -40px 100px -30px rgba(59, 130, 246, 0.2);
+        }
+    }
+    
+    .dashboard-ui {
+        animation: aura-pulse-dark 8s ease-in-out infinite;
+    }
+    
+    /* Button Hover Effect */
+    .btn-content-slide {
+        display: inline-block;
+        position: relative;
+    }
+    
+    .btn-text-hover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transform: translateY(5px);
+        transition: all 0.3s ease;
+    }
+    
+    button:hover .btn-text-original {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    
+    button:hover .btn-text-hover {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Cursor Blink */
+    @keyframes blink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+    }
+    
+    .cursor-blink {
+        animation: blink 1s step-end infinite;
+    }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500/30 font-sans text-slate-600 dark:text-slate-400 bg-white dark:bg-[#020204]">
+    
+    <!-- GLOBAL VISUAL FX LAYER -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-blue-50/60 dark:bg-[#030610] transition-colors duration-500">
+        <!-- Ambient Glow Blobs -->
+        <div class="ambient-glow">
+            <div class="glow-blob bg-blue-600/50 dark:bg-blue-600/40 w-[600px] h-[600px] top-[-20%] left-[-10%] mix-blend-multiply dark:mix-blend-screen animate-blob"></div>
+            <div class="glow-blob bg-blue-600/50 dark:bg-blue-700/40 w-[500px] h-[500px] top-[40%] right-[-10%] mix-blend-multiply dark:mix-blend-screen animate-blob" style="animation-delay: 2s"></div>
+            <div class="glow-blob bg-blue-500/50 dark:bg-blue-600/40 w-[400px] h-[400px] bottom-[-10%] left-[20%] mix-blend-multiply dark:mix-blend-screen animate-blob" style="animation-delay: 4s"></div>
+        </div>
+        
+        <!-- Cursor Spotlight -->
+        <div class="spotlight-overlay" id="spotlight"></div>
+        
+        <!-- Vertical Laser Beams -->
+        <div class="laser-beam-container fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <div class="energy-streak layer-far" style="left:2%;animation-duration:13s;animation-delay:-2s;--streak-opacity:0.08"></div>
+            <div class="energy-streak layer-mid" style="left:22%;animation-duration:8s;animation-delay:-5s;--streak-opacity:0.18"></div>
+            <div class="energy-streak layer-mid" style="left:35%;animation-duration:10s;animation-delay:-1s;--streak-opacity:0.2"></div>
+            <div class="energy-streak layer-far" style="left:50%;animation-duration:14s;animation-delay:-12s;--streak-opacity:0.09"></div>
+            <div class="energy-streak layer-mid" style="left:60%;animation-duration:8s;animation-delay:-8s;--streak-opacity:0.19"></div>
+            <div class="energy-streak layer-mid" style="left:90%;animation-duration:7s;animation-delay:-2s;--streak-opacity:0.25"></div>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 border-b bg-white/70 dark:bg-[#020204]/70 backdrop-blur-xl border-slate-200 dark:border-white/5">
+        <a href="#" class="flex items-center gap-2">
+            <div class="w-9 h-9 bg-gradient-to-br from-blue-50 to-emerald-50 dark:from-blue-500/20 dark:to-emerald-500/20 rounded-lg border border-slate-200 dark:border-white/10 flex items-center justify-center">
+                <iconify-icon icon="lucide:layers" class="text-blue-600 dark:text-blue-400" width="20"></iconify-icon>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-sm font-bold text-slate-900 dark:text-white">FB GROUPS</span>
+                <span class="text-[9px] tracking-widest text-blue-600 dark:text-blue-400 uppercase font-mono">Automation</span>
+            </div>
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="w-9 h-9 flex items-center justify-center rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0a0a0c] hover:border-blue-500/50 transition-all">
+                <iconify-icon id="theme-icon-moon" icon="lucide:moon" width="16" class="absolute transition-all duration-500 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 dark:opacity-0"></iconify-icon>
+                <iconify-icon id="theme-icon-sun" icon="lucide:sun" width="16" class="absolute transition-all duration-500 rotate-90 scale-0 opacity-0 dark:rotate-0 dark:scale-100 dark:opacity-100"></iconify-icon>
+            </button>
+            
+            <button class="text-xs font-semibold bg-white dark:bg-[#0a0a0c] border px-5 py-2 rounded-md transition-all hover:border-blue-500/50 text-slate-900 dark:text-white border-slate-200 dark:border-white/10">
+                Jetzt starten
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <main id="home" class="min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6 relative z-10">
+        <div class="text-center max-w-5xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-[11px] font-medium mb-6 animate-fade-in">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                <span class="text-blue-700 dark:text-blue-300">Facebook Groups Automation</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-8xl font-extrabold tracking-tighter text-slate-900 dark:text-white mb-6 animate-slide-up">
+                Automate. <span class="text-blue-600 dark:text-blue-400">Sell</span>. Scale.
+            </h1>
+            
+            <p class="text-4xl md:text-7xl font-serif italic font-light text-slate-500 dark:text-slate-400 mb-4">
+                für Facebook-Gruppen:
+                <span id="typewriter-text"></span>
+                <span id="cursor" class="inline-block w-[2px] md:w-[3px] h-[0.85em] bg-blue-500/80 ml-1 rounded-full cursor-blink"></span>
+            </p>
+            
+            <p class="text-base max-w-2xl mx-auto mb-10 text-slate-600 dark:text-slate-400 animate-slide-up-delayed opacity-0" style="animation-delay: 0.3s">
+                Wir vermitteln gezielt <span class="text-slate-900 dark:text-white font-medium">Mitglieder in Facebook-Gruppen</span> 
+                und automatisieren <span class="text-slate-900 dark:text-white font-medium">Admin-Accounts</span> komplett.
+            </p>
+            
+            <div class="flex flex-col md:flex-row items-center justify-center gap-5 animate-slide-up-delayed opacity-0" style="animation-delay: 0.5s">
+                <button class="px-8 py-3.5 bg-slate-900 dark:bg-[#0a0a0c] text-sm font-semibold rounded-md text-white hover:bg-slate-800 transition-all">
+                    <span class="btn-content-slide">
+                        <span class="btn-text-original">Kostenlose Beratung</span>
+                        <span class="btn-text-hover">Jetzt starten →</span>
+                    </span>
+                </button>
+                
+                <button class="px-6 py-3 bg-white/80 dark:bg-[#0a0a0b] border border-slate-200 dark:border-white/10 rounded-md text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                    <iconify-icon icon="lucide:play-circle" class="inline-block mr-2" width="16"></iconify-icon>
+                    So funktioniert's
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Services Section -->
+    <section class="py-24 px-6 relative z-10 border-t border-slate-200 dark:border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-medium text-slate-900 dark:text-white mb-4">Unsere Services</h2>
+                <p class="text-slate-600 dark:text-slate-400">Zwei Wege, deine Facebook-Gruppen zu skalieren</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Service 1 -->
+                <div class="p-8 rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.02] hover:border-blue-500/30 transition-all backdrop-blur-sm">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 text-blue-600 dark:text-blue-400">
+                        <iconify-icon icon="lucide:users" width="24"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-medium text-slate-900 dark:text-white mb-3">Mitglieder-Vermittlung</h3>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">
+                        Gezielte Einladungen von relevanten Personen in deine Facebook-Gruppen → Qualifizierte Leads für maximales Wachstum.
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-500">
+                        <li class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Zielgruppen-Targeting
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Automatische Einladungen
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Lead-Tracking
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="p-8 rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/[0.02] hover:border-emerald-500/30 transition-all backdrop-blur-sm">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center mb-6 text-emerald-600 dark:text-emerald-400">
+                        <iconify-icon icon="lucide:bot" width="24"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-medium text-slate-900 dark:text-white mb-3">Admin-Automation</h3>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">
+                        Vollautomatisierte Admin-Accounts: Neue Mitglieder anschreiben, Freebies versenden, Live-Nachrichten an Kommentierende.
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-500">
+                        <li class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                            Automatische Begrüßungen
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                            Freebie-Versand
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                            Live-Nachrichten an Kommentare
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-24 px-6 relative z-10 border-t border-slate-200 dark:border-white/5">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-medium text-slate-900 dark:text-white mb-6">
+                Bereit zu starten?
+            </h2>
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">
+                Lass uns gemeinsam deine Facebook-Gruppen auf das nächste Level bringen.
+            </p>
+            <button class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/20">
+                Kostenlose Beratung buchen
+            </button>
+        </div>
+    </section>
+    
+    <script>
+    // Theme Toggle
+    const htmlRoot = document.getElementById('html-root');
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    themeToggle.addEventListener('click', () => {
+        htmlRoot.classList.toggle('dark');
+        localStorage.setItem('theme', htmlRoot.classList.contains('dark') ? 'dark' : 'light');
+    });
+    
+    // Load theme from localStorage
+    if (localStorage.getItem('theme') === 'light') {
+        htmlRoot.classList.remove('dark');
+    }
+    
+    // Cursor Spotlight
+    const spotlight = document.getElementById('spotlight');
+    document.addEventListener('mousemove', (e) => {
+        spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+        spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+    });
+    
+    // Typewriter Effect
+    const words = ['Mitglieder vermitteln', 'Leads generieren', 'Admin automatisieren'];
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typeElement = document.getElementById('typewriter-text');
+    const cursorElement = document.getElementById('cursor');
+    const typeSpeed = 100;
+    const deleteSpeed = 50;
+    const pauseTime = 2000;
+    
+    function type() {
+        const currentWord = words[wordIndex];
+        
+        if (isDeleting) {
+            typeElement.textContent = currentWord.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            typeElement.textContent = currentWord.substring(0, charIndex + 1);
+            charIndex++;
+        }
+        
+        if (!isDeleting && charIndex === currentWord.length) {
+            isDeleting = true;
+            cursorElement.classList.add('cursor-blink');
+            setTimeout(type, pauseTime);
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            wordIndex = (wordIndex + 1) % words.length;
+            cursorElement.classList.remove('cursor-blink');
+            setTimeout(type, 500);
+        } else {
+            cursorElement.classList.remove('cursor-blink');
+            setTimeout(type, isDeleting ? deleteSpeed : typeSpeed);
+        }
+    }
+    
+    // Start typewriter on load
+    setTimeout(type, 1000);
+    </script>
+</body>
+</html>
