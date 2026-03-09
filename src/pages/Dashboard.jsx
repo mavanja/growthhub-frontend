@@ -103,28 +103,28 @@ export default function Dashboard() {
           value="1.801"
           icon={Users}
           trend={4.7}
-          trendLabel="vs. Vormonat"
+          previousValue="1.720"
         />
         <KPICard
           title="Nachrichten gesendet"
-          value={formatNumber(mockKPIs.totalMessagesSent)}
+          value="1.102"
           icon={MessageSquare}
-          trend={12.5}
-          trendLabel="vs. Vormonat"
+          trend={9.3}
+          previousValue="1.008"
         />
         <KPICard
           title="Oeffnungsrate"
-          value={`${mockKPIs.openRate}%`}
+          value="72.4%"
           icon={Eye}
-          trend={3.2}
-          trendLabel="vs. Vormonat"
+          trend={3.1}
+          previousValue="70.2%"
         />
         <KPICard
           title="Engagement-Rate"
-          value={`${mockKPIs.engagementRate}%`}
+          value="38.6%"
           icon={TrendingUp}
-          trend={5.1}
-          trendLabel="vs. Vormonat"
+          trend={5.4}
+          previousValue="36.6%"
         />
       </div>
 

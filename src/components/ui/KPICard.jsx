@@ -5,7 +5,7 @@ export default function KPICard({
   value,
   icon: Icon,
   trend,
-  trendLabel,
+  previousValue,
 }) {
   const isPositive = trend > 0
 
@@ -36,10 +36,12 @@ export default function KPICard({
         <p className="text-2xl font-mono font-semibold text-gray-900 dark:text-white">{value}</p>
         <p className="text-sm text-gray-500 dark:text-muted-light mt-1">
           {title}
-          {trendLabel && (
-            <span className="text-gray-400 dark:text-muted text-xs ml-1.5">{trendLabel}</span>
-          )}
         </p>
+        {previousValue && (
+          <p className="text-xs text-gray-400 dark:text-muted mt-1">
+            Vormonat: {previousValue}
+          </p>
+        )}
       </div>
     </div>
   )
