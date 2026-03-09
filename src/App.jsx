@@ -3,7 +3,8 @@ import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
+// Registration disabled – admin-only accounts
+// import RegisterPage from './pages/RegisterPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import Shell from './components/dashboard/Shell'
@@ -11,7 +12,7 @@ import Dashboard from './pages/Dashboard'
 import Service from './pages/Service'
 import Settings from './pages/Settings'
 import Support from './pages/Support'
-import GroupAnalyzer from './pages/GroupAnalyzer'
+// import GroupAnalyzer from './pages/GroupAnalyzer'
 
 function App() {
   return (
@@ -22,9 +23,9 @@ function App() {
           {/* Public */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          {/* Registration disabled */}
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/analyze" element={<GroupAnalyzer />} />
+          {/* <Route path="/analyze" element={<GroupAnalyzer />} /> */}
 
           {/* Protected */}
           <Route element={<ProtectedRoute />}>

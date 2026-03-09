@@ -126,17 +126,6 @@ export default function LoginForm() {
         </Button>
       </form>
 
-      <div className="flex items-center gap-3 my-6">
-        <div className="flex-1 h-px bg-gray-200 dark:bg-white/[0.06]" />
-        <span className="text-xs text-gray-400 dark:text-muted">oder</span>
-        <div className="flex-1 h-px bg-gray-200 dark:bg-white/[0.06]" />
-      </div>
-
-      <Link to="/register">
-        <Button variant="secondary" className="w-full">
-          Konto erstellen
-        </Button>
-      </Link>
     </div>
   )
 }
