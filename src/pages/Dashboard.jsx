@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { MessageSquare, Users, Eye, TrendingUp } from 'lucide-react'
+import { MessageSquare, Users, Eye, TrendingUp, Shield, Calendar } from 'lucide-react'
 import {
   LineChart,
   Line,
@@ -59,26 +59,57 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="text-sm text-gray-500 dark:text-muted mt-1">
-          Willkommen zurueck, {user?.name || 'Benutzer'}
-        </p>
+      {/* Group Header */}
+      <div className="bg-white dark:bg-surface-2/80 border border-gray-200 dark:border-white/[0.06] rounded-xl p-6">
+        <div className="flex items-center gap-5">
+          <img
+            src="/wasserwissen-logo.jpg"
+            alt="Wasserwissen 360°"
+            className="w-20 h-20 rounded-xl object-cover shadow-md flex-shrink-0"
+          />
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white leading-tight">
+              Wasserwissen 360°
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-muted mt-0.5">
+              Deine Quelle fuer Gesundheit, Lebenskraft &amp; Vitalitaet
+            </p>
+            <div className="flex items-center gap-4 mt-2">
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-muted-light">
+                <Users className="w-3.5 h-3.5" />
+                <span className="font-semibold text-gray-900 dark:text-white">1.801</span> Mitglieder
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-muted-light">
+                <Shield className="w-3.5 h-3.5" />
+                Privat
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-muted-light">
+                <Calendar className="w-3.5 h-3.5" />
+                Seit Nov. 2021
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#22c55e]">
+                <TrendingUp className="w-3.5 h-3.5" />
+                +23 diese Woche
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
+      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard
+          title="Gesamt Mitglieder"
+          value="1.801"
+          icon={Users}
+          trend={4.7}
+          trendLabel="vs. Vormonat"
+        />
         <KPICard
           title="Nachrichten gesendet"
           value={formatNumber(mockKPIs.totalMessagesSent)}
           icon={MessageSquare}
           trend={12.5}
-          trendLabel="vs. Vormonat"
-        />
-        <KPICard
-          title="Mitglieder gewonnen"
-          value={formatNumber(mockKPIs.membersAcquired)}
-          icon={Users}
-          trend={8.3}
           trendLabel="vs. Vormonat"
         />
         <KPICard
