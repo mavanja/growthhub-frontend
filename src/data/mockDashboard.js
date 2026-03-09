@@ -67,6 +67,12 @@ const ACTION_MAP = {
     'Netzwerk-Reichweite erweitert',
     'Interaktion generiert',
   ],
+  'auszaehlung': [
+    'Einladung versendet',
+    'Beitritt bestaetigt',
+    'Einladung erneuert',
+    'Profil geprueft',
+  ],
   'direkt-kommunikation': [
     'Direktnachricht gesendet',
     'Event-Info zugestellt',
