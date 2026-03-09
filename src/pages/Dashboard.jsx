@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { MessageSquare, Users, Eye, TrendingUp, Shield, Calendar } from 'lucide-react'
+import { MessageSquare, Users, Eye, TrendingUp, Globe, Calendar } from 'lucide-react'
 import {
   LineChart,
   Line,
@@ -80,8 +80,8 @@ export default function Dashboard() {
                 <span className="font-semibold text-gray-900 dark:text-white">1.801</span> Mitglieder
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-muted-light">
-                <Shield className="w-3.5 h-3.5" />
-                Privat
+                <Globe className="w-3.5 h-3.5" />
+                Oeffentlich
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-muted-light">
                 <Calendar className="w-3.5 h-3.5" />
