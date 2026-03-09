@@ -1,13 +1,23 @@
 import { useState, useMemo, useCallback } from 'react'
-import { ClipboardList, Search } from 'lucide-react'
+import { ClipboardList, Search, Download } from 'lucide-react'
 import { mockInvitations, INVITER_ACCOUNTS } from '../../data/mockInvitations'
 import { formatDate } from '../../utils/formatters'
 import KPICard from '../ui/KPICard'
 import Card from '../ui/Card'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
+import useExport from '../../hooks/useExport'
+
+const CSV_COLUMNS = [
+  { key: 'name', label: 'Name' },
+  { key: 'profileLink', label: 'Profil-Link' },
+  { key: 'invitedAt', label: 'Eingeladen am' },
+  { key: 'joinedAt', label: 'Beigetreten' },
+  { key: 'invitedBy', label: 'Eingeladen von' },
+]
 
 export default function AuszaehlungView({ service }) {
+  const { exportToCSV } = useExport()
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [inviterFilter, setInviterFilter] = useState('')
@@ -137,6 +147,21 @@ export default function AuszaehlungView({ service }) {
           </div>
           <Button variant="ghost" size="sm" onClick={handleReset}>
             Zuruecksetzen
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => exportToCSV(
+              filteredInvitations.map((inv) => ({
+                ...inv,
+                joinedAt: inv.joinedAt || 'Ausstehend',
+              })),
+              CSV_COLUMNS,
+              'auszaehlung-export'
+            )}
+          >
+            <Download className="w-4 h-4" />
+            CSV Export
           </Button>
         </div>
       </Card>
