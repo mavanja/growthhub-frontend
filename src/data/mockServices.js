@@ -110,6 +110,27 @@ const services = [
     ],
   },
   {
+    id: 'auszaehlung',
+    title: 'Auszaehlung',
+    description:
+      'Uebersicht aller eingeladenen Personen mit Status-Tracking. Sieh genau, wer eingeladen wurde, wann der Beitritt erfolgte und welcher Account die Einladung versendet hat.',
+    features: [
+      'Einladungs-Tracking',
+      'Beitritts-Status',
+      'Account-Zuordnung',
+      'Profil-Verlinkung',
+    ],
+    iconName: 'ClipboardList',
+    gradient: 'from-teal-500/20 to-cyan-500/20',
+    color: 'teal',
+    kpiLabels: [
+      'Eingeladen gesamt',
+      'Beigetreten',
+      'Ausstehend',
+      'Beitrittsrate',
+    ],
+  },
+  {
     id: 'direkt-kommunikation',
     title: 'Direkt-Kommunikation',
     description:

@@ -7,6 +7,7 @@ import {
   Rocket,
   Megaphone,
   Mail,
+  ClipboardList,
   Settings,
   HelpCircle,
   ChevronLeft,
@@ -25,6 +26,7 @@ const ICON_MAP = {
   Rocket,
   Megaphone,
   Mail,
+  ClipboardList,
 }
 
 const navLinkBase =

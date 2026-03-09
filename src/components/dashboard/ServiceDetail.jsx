@@ -7,6 +7,7 @@ import {
   Rocket,
   Megaphone,
   Mail,
+  ClipboardList,
   Search,
   Download,
   FileSpreadsheet,
@@ -47,6 +48,7 @@ const ICON_MAP = {
   Rocket,
   Megaphone,
   Mail,
+  ClipboardList,
 }
 
 const PIE_COLORS = {
@@ -217,6 +219,96 @@ export default function ServiceDetail() {
 
   const Icon = ICON_MAP[service.iconName] || Users
   const kpiLabels = service.kpiLabels
+
+  // Auszaehlung: dedicated view with invitation table
+  if (serviceId === 'auszaehlung') {
+    const totalInvited = mockInvitations.length
+    const totalJoined = mockInvitations.filter((i) => i.joinedAt).length
+    const totalPending = totalInvited - totalJoined
+    const joinRate = ((totalJoined / totalInvited) * 100).toFixed(1)
+
+    return (
+      <div className="space-y-6">
+        {/* Service Header */}
+        <div className="flex items-start gap-4">
+          <div className="rounded-xl bg-accent-500/10 text-accent-500 p-3">
+            <Icon className="w-7 h-7" />
+          </div>
+          <div>
+            <h1 className="font-display text-2xl italic text-gray-900 dark:text-white">
+              {service.title}
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-muted-light mt-1">{service.description}</p>
+          </div>
+        </div>
+
+        {/* KPI Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICard title="Eingeladen gesamt" value={String(totalInvited)} icon={Icon} trend={14.2} previousValue="18" />
+          <KPICard title="Beigetreten" value={String(totalJoined)} icon={Icon} trend={11.8} previousValue="16" />
+          <KPICard title="Ausstehend" value={String(totalPending)} icon={Icon} trend={-8.3} previousValue="4" />
+          <KPICard title="Beitrittsrate" value={`${joinRate}%`} icon={Icon} trend={2.1} previousValue="84.2%" />
+        </div>
+
+        {/* Invitation Table */}
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+              Eingeladene Mitglieder
+            </h2>
+            <span className="text-xs text-gray-400 dark:text-muted">
+              {totalJoined}/{totalInvited} beigetreten
+            </span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-white/[0.06]">
+                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Name</th>
+                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Profil</th>
+                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Eingeladen am</th>
+                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Beigetreten</th>
+                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Eingeladen von</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-white/[0.04]">
+                {mockInvitations.map((inv) => (
+                  <tr key={inv.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                    <td className="py-2.5 px-3 text-gray-900 dark:text-white font-medium">{inv.name}</td>
+                    <td className="py-2.5 px-3">
+                      <a
+                        href={inv.profileLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent-500 hover:text-accent-400 text-xs underline underline-offset-2 transition-colors"
+                      >
+                        Profil ansehen
+                      </a>
+                    </td>
+                    <td className="py-2.5 px-3 text-gray-500 dark:text-muted-light">{formatDate(inv.invitedAt)}</td>
+                    <td className="py-2.5 px-3">
+                      {inv.joinedAt ? (
+                        <span className="inline-flex items-center gap-1.5 text-[#22c55e] text-xs font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+                          {formatDate(inv.joinedAt)}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-gray-400 dark:text-muted text-xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-muted" />
+                          Ausstehend
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-2.5 px-3 text-gray-500 dark:text-muted-light">{inv.invitedBy}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -408,65 +500,6 @@ export default function ServiceDetail() {
 
       {/* Data Table */}
       <DataTable columns={TABLE_COLUMNS} data={filteredRecords} pageSize={10} />
-
-      {/* Invitation Table - only for Community-Wachstum */}
-      {serviceId === 'community-wachstum' && (
-        <Card>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
-              Auszaehlung – Eingeladene Mitglieder
-            </h2>
-            <span className="text-xs text-gray-400 dark:text-muted">
-              {mockInvitations.filter((i) => i.joinedAt).length}/{mockInvitations.length} beigetreten
-            </span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-white/[0.06]">
-                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Name</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Profil</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Eingeladen am</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Beigetreten</th>
-                  <th className="text-left py-2.5 px-3 text-xs font-medium text-gray-500 dark:text-muted uppercase tracking-wider">Eingeladen von</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-white/[0.04]">
-                {mockInvitations.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                    <td className="py-2.5 px-3 text-gray-900 dark:text-white font-medium">{inv.name}</td>
-                    <td className="py-2.5 px-3">
-                      <a
-                        href={inv.profileLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent-500 hover:text-accent-400 text-xs underline underline-offset-2 transition-colors"
-                      >
-                        Profil ansehen
-                      </a>
-                    </td>
-                    <td className="py-2.5 px-3 text-gray-500 dark:text-muted-light">{formatDate(inv.invitedAt)}</td>
-                    <td className="py-2.5 px-3">
-                      {inv.joinedAt ? (
-                        <span className="inline-flex items-center gap-1.5 text-[#22c55e] text-xs font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
-                          {formatDate(inv.joinedAt)}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 text-gray-400 dark:text-muted text-xs">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-muted" />
-                          Ausstehend
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3 text-gray-500 dark:text-muted-light">{inv.invitedBy}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
     </div>
   )
 }
